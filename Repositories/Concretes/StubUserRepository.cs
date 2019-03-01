@@ -21,8 +21,8 @@ namespace FirstsStepsRUI.Repositories
 
             _credentials = new List<Credential>
             {
-                new Credential(_users.First(e => e.Id == 1), "correct horse battery staple"),
-                new Credential(_users.First(e => e.Id == 2), "Generic")
+                new Credential(_users.First(e => e.Id == 1), "devcode"),
+                new Credential(_users.First(e => e.Id == 2), "generic")
             };
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Windows;
 using FirstsStepsRUI.Models;
 using FirstsStepsRUI.Repositories;
 using ReactiveUI;
+using ReactiveUI.Legacy;
 
 namespace FirstsStepsRUI.ViewModels
 {
@@ -14,7 +16,7 @@ namespace FirstsStepsRUI.ViewModels
         private readonly IUserRepository _userRepository;
         public string UrlPathSegment { get { return "User"; } }
         public IScreen HostScreen { get; protected set; }
-        public ReactiveCommand<bool> Submit { get; private set; }
+        public ReactiveCommand<Unit,bool> Submit { get; private set; }
 
 
         private User _model;
@@ -51,16 +53,14 @@ namespace FirstsStepsRUI.ViewModels
             HostScreen = screen;
             // Commands
             var canSubmit = this.WhenAny(e => e.Code, code => code.Value.IsValid());
-            Submit = ReactiveCommand.CreateAsyncTask(canSubmit, _ => userRepository.Submit(Model));
+            Submit = ReactiveCommand.CreateFromTask(_ => userRepository.Submit(Model), canSubmit);
             Submit.Subscribe(result => MessageBox.Show(result ? "Success" : "Failure"));
             // Observe on UI thread
-            Submit.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)
-                .Select(ex => new UserError("It will fail again, try anyway?", ex.Message))
-                .SelectMany(UserError.Throw)
+            Submit.ThrownExceptions.ObserveOn(RxApp.MainThreadScheduler)                
                 .Subscribe(resolution =>
                 {
-                    if (resolution == RecoveryOptionResult.RetryOperation)
-                        Submit.Execute(null);
+                    //if (resolution == RecoveryOptionResult.RetryOperation)
+                    //    Submit.Execute();
                 });
             // Model subscription
             this.WhenAnyValue(e => e.Model).Where(e => e != null).Subscribe(model =>
@@ -73,20 +73,20 @@ namespace FirstsStepsRUI.ViewModels
             this.WhenAnyValue(e => e.Group).Subscribe(group => Model.Group = group);
             this.WhenAnyValue(e => e.Code).Subscribe(code => Model.Code = code);
             // Subscribe to error handle
-            UserError.RegisterHandler(async error =>
-            {
-                // This shouldn't be a messagebox because is blocking the application, you must provide context and offer a resolution to the user not just showing "error"
-                await Task.Delay(1);
-                var message = new StringBuilder();
-                bool hasRecoveryOptions = error.ErrorCauseOrResolution.IsValid();
-                if (hasRecoveryOptions)
-                    message.AppendLine(error.ErrorCauseOrResolution);
-                message.AppendLine(error.ErrorMessage);
-                var result = MessageBox.Show(message.ToString(), "Alert!",
-                    hasRecoveryOptions ? MessageBoxButton.YesNo : MessageBoxButton.OK);
+            //UserError.RegisterHandler(async error =>
+            //{
+            //    // This shouldn't be a messagebox because is blocking the application, you must provide context and offer a resolution to the user not just showing "error"
+            //    await Task.Delay(1);
+            //    var message = new StringBuilder();
+            //    bool hasRecoveryOptions = error.ErrorCauseOrResolution.IsValid();
+            //    if (hasRecoveryOptions)
+            //        message.AppendLine(error.ErrorCauseOrResolution);
+            //    message.AppendLine(error.ErrorMessage);
+            //    var result = MessageBox.Show(message.ToString(), "Alert!",
+            //        hasRecoveryOptions ? MessageBoxButton.YesNo : MessageBoxButton.OK);
                 
-                return hasRecoveryOptions && result == MessageBoxResult.Yes ?  RecoveryOptionResult.RetryOperation : RecoveryOptionResult.CancelOperation;
-            });
+            //    return hasRecoveryOptions && result == MessageBoxResult.Yes ?  RecoveryOptionResult.RetryOperation : RecoveryOptionResult.CancelOperation;
+            //});
         }
     }
 }

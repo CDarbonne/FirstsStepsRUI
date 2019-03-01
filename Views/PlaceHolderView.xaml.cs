@@ -26,7 +26,13 @@ namespace FirstsStepsRUI.Views
         public PlaceHolderView()
         {
             InitializeComponent();
-            this.BindCommand(ViewModel, vm => vm.ChangeView, v => v.ClickMe);
+
+            this.WhenActivated(d =>
+            {
+                d(this.BindCommand(ViewModel,
+                    viewModel => viewModel.ChangeView,
+                    view => view.ClickMe));
+            });
         }
     }
 }

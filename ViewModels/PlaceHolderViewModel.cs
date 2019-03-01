@@ -12,12 +12,12 @@ namespace FirstsStepsRUI.ViewModels
             get { return "Placeholder"; }
         }
 
-        public ReactiveCommand<Unit> ChangeView { get; protected set; }
+        public ReactiveCommand<Unit,Unit> ChangeView { get; protected set; }
 
         public PlaceHolderViewModel(IScreen screen)
         {
             HostScreen = screen;
-            ChangeView = ReactiveCommand.CreateAsyncObservable(_ => HostScreen.Router.NavigateBack.ExecuteAsync());
+            ChangeView = ReactiveCommand.CreateFromObservable(() => HostScreen.Router.NavigateBack.Execute());
         }
     }
 }
