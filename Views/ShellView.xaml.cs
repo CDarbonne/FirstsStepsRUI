@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reactive.Disposables;
+using System.Windows;
 using FirstsStepsRUI.ViewModels;
 using ReactiveUI;
 
@@ -28,8 +29,15 @@ namespace FirstsStepsRUI.Views
 
             this.WhenActivated(d =>
             {
-                d(this.OneWayBind(ViewModel, vm => vm.MenuViewModel, v => v.Menu.ViewModel));
-                d(this.Bind(ViewModel, vm => vm.HostScreen.Router, v => v.ContentView.Router));
+                this.OneWayBind(ViewModel, 
+                    vm => vm.MenuViewModel, 
+                    v => v.Menu.ViewModel)
+                    .DisposeWith(d);
+
+                this.Bind(ViewModel, 
+                    vm => vm.HostScreen.Router, 
+                    v => v.ContentView.Router)
+                    .DisposeWith(d);
             });
         }
     }

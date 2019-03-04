@@ -30,6 +30,9 @@ namespace FirstsStepsRUI.ViewModels
             set { this.RaiseAndSetIfChanged(ref _selectedOption, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<bool> _isAvailable;
+        public bool IsAvailable => _isAvailable.Value;
+
         public MenuViewModel(IUserRepository userRepository)
         {
             if (userRepository == null) 
@@ -58,6 +61,12 @@ namespace FirstsStepsRUI.ViewModels
             // Use WhenAnyValue to check if a property was changed
             // If user was changed reload menu
             this.WhenAnyValue(m => m.User).InvokeCommand(this, vm => vm.LoadMenu);
+            //this.WhenAnyValue(so => so.SelectedOption).InvokeCommand(this, mvm => )
+
+            _isAvailable = this
+                .WhenAnyValue(x => x.Menu.Count)
+                .Select(Count => Count > 0)
+                .ToProperty(this, x => x.IsAvailable);
         }
     }
 }

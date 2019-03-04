@@ -4,14 +4,90 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModels1="clr-namespace:FirstsStepsRUI.ViewModels"
-             mc:Ignorable="d" Width="100">
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" >
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <!--  This is the template for all menu items. In this sample we use the glyph items.  -->
+            <DataTemplate x:Key="HamburgerMenuItem" DataType="{x:Type Controls:HamburgerMenuItem}">
+                <Grid Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                           Height="48"
+                           Source="{Binding Icon}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Text="{Binding Model.Name}" />
+                </Grid>
+            </DataTemplate>
+
+            <!--  This is the template for all option menu items.  -->
+            <DataTemplate x:Key="HamburgerOptionsMenuItem" DataType="{x:Type Controls:HamburgerMenuItem}">
+                <Grid Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0"
+                           Height="48"
+                           Source="{Binding Icon}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Text="{Binding Model.Name}" />
+                </Grid>
+            </DataTemplate>
+
+            <Style x:Key="HamburgerMenuCreatorsItemStyle"
+                   BasedOn="{StaticResource HamburgerMenuItemStyle}"
+                   TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Controls:ItemHelper.ActiveSelectionBackgroundBrush" Value="Transparent" />
+                <Setter Property="Controls:ItemHelper.ActiveSelectionForegroundBrush" Value="{DynamicResource AccentBaseColorBrush}" />
+                <Setter Property="Controls:ItemHelper.DisabledForegroundBrush" Value="{DynamicResource GrayNormalBrush}" />
+                <Setter Property="Controls:ItemHelper.DisabledSelectedBackgroundBrush" Value="Transparent" />
+                <Setter Property="Controls:ItemHelper.DisabledSelectedForegroundBrush" Value="{DynamicResource GrayNormalBrush}" />
+                <Setter Property="Controls:ItemHelper.HoverBackgroundBrush" Value="{DynamicResource GrayBrush9}" />
+                <Setter Property="Controls:ItemHelper.HoverSelectedBackgroundBrush" Value="{DynamicResource GrayBrush9}" />
+                <Setter Property="Controls:ItemHelper.SelectedBackgroundBrush" Value="Transparent" />
+                <Setter Property="Controls:ItemHelper.SelectedForegroundBrush" Value="{DynamicResource AccentBaseColorBrush}" />
+            </Style>
+
+            <Style x:Key="HamburgerMenuCreatorsStyle"
+                   BasedOn="{StaticResource {x:Type Controls:HamburgerMenu}}"
+                   TargetType="{x:Type Controls:HamburgerMenu}">
+                <Setter Property="ItemContainerStyle" Value="{StaticResource HamburgerMenuCreatorsItemStyle}" />
+                <Setter Property="OptionsItemContainerStyle" Value="{StaticResource HamburgerMenuCreatorsItemStyle}" />
+                <Setter Property="PaneBackground" Value="{DynamicResource WhiteBrush}" />
+                <Setter Property="PaneForeground" Value="{DynamicResource TextBrush}" />
+                <Setter Property="ShowSelectionIndicator" Value="True" />
+                <Style.Triggers>                    
+                    <Trigger Property="IsPaneOpen" Value="False">
+                        <Setter Property="Width" Value="50" />
+                    </Trigger>
+                    <Trigger Property="IsPaneOpen" Value="True">
+                        <Setter Property="Width" Value="Auto" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
-        <ListView x:Name="SideMenu">
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="viewModels1:MenuOptionViewModel">
-                    <TextBlock Text="{Binding Model.Option}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <Controls:HamburgerMenu x:Name="HamburgerMenuControl"
+                                HamburgerVisibility="Visible"
+                                IsPaneOpen="True"
+                                OpenPaneLength="175"
+                                ItemInvoked="HamburgerMenuControl_OnItemInvoked"
+                                ItemTemplate="{StaticResource HamburgerMenuItem}"
+                                SelectedIndex="{Binding Path=SelectedItem.Index}"
+                                Style="{StaticResource HamburgerMenuCreatorsStyle}"                                
+                                VerticalScrollBarOnLeftSide="False">            
+        </Controls:HamburgerMenu>
     </Grid>
+
 </UserControl>

@@ -25,7 +25,6 @@ namespace FirstsStepsRUI.ViewModels
         public MenuViewModel MenuViewModel { get; set; }
         // Might as well be a dialog
         public LoginViewModel LoginViewModel { get; set; }
-        
 
         public ShellViewModel(IScreen screen, IUserRepository userRepository)
         {
@@ -33,9 +32,12 @@ namespace FirstsStepsRUI.ViewModels
             _userRepository = userRepository;
             MenuViewModel = new MenuViewModel(_userRepository);
             LoginViewModel = new LoginViewModel(HostScreen, _userRepository);
+
             SetInterfaceByUser();
             SetInterface();
+
             HostScreen.Router.Navigate.Execute(LoginViewModel);
+
             this.WhenAnyValue(vm => vm.LoginViewModel.User).Subscribe(user => User = user);
         }
 
@@ -47,6 +49,8 @@ namespace FirstsStepsRUI.ViewModels
 
         private void SetInterface()
         {
+            this.HostScreen.Router.WhenAnyObservable(r => r.CurrentViewModel).Subscribe(CurrentViewModel => MenuViewModel.SelectedOption = CurrentViewModel as MenuOptionViewModel);
+
             // We own the object so we control it's lifecycle, no problem on subscribing here, i hope so.
             this.WhenAny(vm => vm.MenuViewModel.SelectedOption, mvm => mvm.Value).Where(e => e != null).Subscribe(e =>
             {

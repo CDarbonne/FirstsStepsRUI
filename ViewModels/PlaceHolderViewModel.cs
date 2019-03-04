@@ -17,7 +17,7 @@ namespace FirstsStepsRUI.ViewModels
         public PlaceHolderViewModel(IScreen screen)
         {
             HostScreen = screen;
-            ChangeView = ReactiveCommand.CreateFromObservable(() => HostScreen.Router.NavigateBack.Execute());
+            ChangeView = ReactiveCommand.CreateFromObservable(() => HostScreen.Router.NavigateBack.Execute());            
         }
     }
 }

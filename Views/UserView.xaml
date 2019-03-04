@@ -20,7 +20,7 @@
             </ComboBox>
             <TextBlock Text="Write something here:"></TextBlock>
             <TextBox x:Name="Write"></TextBox>
-            <Button x:Name="Submit" Content="Sumit"></Button>
+            <Button x:Name="Submit" Content="Submit" Margin="0,5,0,0"/>
         </StackPanel>
     </Grid>
 </UserControl>

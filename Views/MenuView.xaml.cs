@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using FirstsStepsRUI.ViewModels;
+using MahApps.Metro.Controls;
 using ReactiveUI;
 
 namespace FirstsStepsRUI.Views
@@ -22,6 +23,19 @@ namespace FirstsStepsRUI.Views
             set { SetValue(ViewModelProperty, value); }
         }
 
+        private void HamburgerMenuControl_OnItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
+        {
+            //ViewModel.SelectedOption = e.InvokedItem as MenuOptionViewModel;
+        }
+
+        public int SelectedIndex
+        {
+            get
+            {
+                return HamburgerMenuControl.Items.IndexOf(ViewModel.SelectedOption);
+            }
+        }
+
         public MenuView()
         {
             InitializeComponent();
@@ -29,11 +43,17 @@ namespace FirstsStepsRUI.Views
             {
                 d(this.OneWayBind(ViewModel,
                     vm => vm.Menu,
-                    v => v.SideMenu.ItemsSource));
+                    v => v.HamburgerMenuControl.ItemsSource));
 
                 d(this.Bind(ViewModel,
                     vm => vm.SelectedOption,
-                    v => v.SideMenu.SelectedValue));
+                    v => v.HamburgerMenuControl.SelectedItem));
+
+                d(this.OneWayBind(ViewModel,
+                    vm => vm.IsAvailable,
+                    v => v.HamburgerMenuControl.Visibility));
+
+                //ViewModel.IsAvailable.WhenAnyValue(ViewModel.IsAvailable == true ? HamburgerMenuControl.SelectedIndex = 1 : );
             });
         }
     }
